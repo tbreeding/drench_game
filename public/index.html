@@ -211,23 +211,39 @@
         <div class="square"></div>
         <div class="square"></div>
       </div>
-      <div id="controlPanel">
-        <div id="movesLeft">
-          <h3>Moves Left:</h3>
-          <h3 id="currMovesLeft">30</h3>
+      <div class="controls">
+        <div id="controlPanel">
+          <div id="movesLeft">
+            <h3>Moves Left:</h3>
+            <h3 id="currMovesLeft"></h3>
+          </div>
+          <div id="colorButtons">
+            <div class="colorBtn"></div>
+            <div class="colorBtn"></div>
+            <div class="colorBtn"></div>
+            <div class="colorBtn"></div>
+            <div class="colorBtn"></div>
+            <div class="colorBtn"></div>
+          </div>
         </div>
-        <div id="colorButtons">
-          <div class="colorBtn"></div>
-          <div class="colorBtn"></div>
-          <div class="colorBtn"></div>
-          <div class="colorBtn"></div>
-          <div class="colorBtn"></div>
-          <div class="colorBtn"></div>
-        </div>
+        <div id="totalMovesThisTurn"></div>
+        <div class="resetBtn">Reset</div>
       </div>
-      <div id="totalMovesThisTurn"></div>
     </div>
   </div>
+  <div id="endGameModal">
+    <div class="endGame" id="gameWon">
+      <h2>You Won!</h2>
+      <p>Let's keep going!</p>
+      <div id="continueGame">Continue Game?</div>
+    </div>
+    <div class="endGame" id="gameLost">
+      <h2>Game Over!</h2>
+      <p>You're out of moves!</p>
+      <div class="resetBtn">Reset</div>
+    </div>
+  </div>
+  
   <script src="js/main.js"></script>
 </body>
 </html>
