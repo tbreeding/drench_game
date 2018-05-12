@@ -1,0 +1,57 @@
+@media screen and (min-width: 400px) and (max-width: 600px) {
+    body {
+        height: unset;
+    }
+    .container {
+        border-radius: 0;
+        width: 100%;
+        padding: .4rem;
+        box-shadow: 10px 10px 10px $black;
+    }
+    .title {
+        font-size: .8rem;
+        margin-bottom: 15px;
+        i {
+            font-size: 2rem;
+        }
+        h1 {
+            margin: 0 10px;
+            text-shadow: 0px 1px $black, 0 7px $black;
+        }
+    }
+    .game {
+        flex-direction: column;
+        height: unset;
+        width: 100%;
+        padding: 35px 5px 0 5px;
+    }
+    #gameBoard {
+        margin-bottom: 20px;
+    }
+    .square {
+        height: 25px;
+        width: 25px;
+    }
+    #controlPanel {
+        display: flex;
+        // flex-direction: column;
+    }
+    #colorButtons {
+        padding: 2px;
+        margin: 5px 5px 5px 10px;
+    }
+    .colorBtn {
+        height: 25px;
+        width: 25px;
+    }
+    #movesLeft {
+        flex-direction: row;
+        box-shadow: 2px 2px 3px $black;
+        h3 {
+            font-size: .8rem;
+        }
+        #currMovesLeft {
+            font-size: 1.5rem;
+        }
+    }
+}
