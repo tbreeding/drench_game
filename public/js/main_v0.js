@@ -1,5 +1,6 @@
 const COLORS = ["#3066BE", "#119DA4", "#D6FFF6", "#F55D3E", "#ED217C", "#F1C40F"];
 const SQUARES = document.querySelectorAll(".square");
+
 const COLOR_BTNS = document.querySelectorAll(".colorBtn");
 const TOTAL_MOVES_DIV = document.getElementById("totalMovesThisTurn");
 
@@ -24,39 +25,29 @@ let totalMoves;
 let claimedSquares;    
 let currentColor;
 
-const addNewSquares = (sqrs) => {
-    claimedSquares = claimedSquares.concat(sqrs); 
+const addNewSquares = (array) => {
+    // console.log(array)
+    claimedSquares = claimedSquares.concat(array); 
     return;
 }
 const checkAdjacentSquares = (sqr) => {
     
-    const isOffEdge = (adjSqr) => {
-        if(adjSqr[0] < 0 || adjSqr[0] >= Math.sqrt(SQUARES.length) || adjSqr[1] < 0 || adjSqr[1] >= Math.sqrt(SQUARES.length)) return true
+    const isOnEdge = (adjSqr) => {
+        if(adjSqr[0] < 0 || adjSqr[0] >= Math.sqrt(SQUARES) || adjSqr[1] < 0 || adjSqr[1] >= Math.sqrt(SQUARES)) return true
         return false;
     } 
-    const isClaimed = (sqr) => {
-
-        if (claimedSquares.indexOf(sqr) >= 0) {
-            return true;
-        } else {
-        return false;
-        }
-    }
-    const checkNeighbor = (sqr, stateSqr) => {
-        if(Math.abs(sqr[0] - stateSqr[0]) + Math.abs(sqr[1] - stateSqr[1]) == 1) return true;
-        return false;
-    }
     const searchAdjacentSquares = (sqr, stepRow, stepCol, color) => {
-        let curRow = parseInt(sqr.split(',')[0]) + stepRow;
-        let curCol = parseInt(sqr.split(',')[1]) + stepCol;
+        // debugger;
+        let curRow = sqr[0] + stepRow;
+        let curCol = sqr[1] + stepCol;
         let endWhileLoop = false;
-
+        let newSquares = [];
         while(!endWhileLoop) {
 
-            if(!isOffEdge([curRow, curCol])) {
+            if(!isOnEdge([curRow, curCol])) {
 
-                if(BOARD_STATE[curRow][curCol] === color && isClaimed(`${curRow},${curCol}`) === false) {
-                    claimedSquares.push(`${curRow},${curCol}`);    
+                if(!claimedSquares.includes([curRow, curCol]) && BOARD_STATE[curRow][curCol] === color) {
+                    newSquares.push([curRow, curCol]);
 
                     curRow += stepRow;
                     curCol += stepCol;
@@ -67,6 +58,15 @@ const checkAdjacentSquares = (sqr) => {
                 endWhileLoop = true;
             }
         }
+
+        if(newSquares.length > 0) {
+            addNewSquares(newSquares);
+            // newSquares.forEach(sqr => {
+            //     checkAdjacentSquares(sqr);
+            // });
+        };
+
+
         return;
     }
     searchAdjacentSquares(sqr, 0, -1, currentColor); //left
@@ -77,27 +77,16 @@ const checkAdjacentSquares = (sqr) => {
     return;
 }
 const checkForNewSquares = (color) => {
-    let counter = -1;
-    let arrayLength;;
-    let endLoop = false;
-    // debugger
-    while(endLoop == false) {
-        counter++;
-        if(claimedSquares.length > counter) {
-            
-            checkAdjacentSquares(claimedSquares[counter], color);
-            
-        } else {
-            endLoop = true;
-        }
-    }
+    claimedSquares.forEach(sqr => {
+        checkAdjacentSquares(sqr);
+    });
     paintBoard(); 
 }
 const paintBoard = () => {
     let currentSquare;
     BOARD_STATE.forEach((row, rowInd) => {
         row.forEach((col, colInd) => {
-            currentSquare = document.querySelector("[data-col='" + colInd + "'][data-row='" + rowInd + "']");
+            currentSquare = document.querySelector("[data-col='" + colInd + "'][data-row='" + rowInd + "']")
             currentSquare.style.backgroundColor = COLORS[BOARD_STATE[rowInd][colInd]];   
         });
     });
@@ -105,7 +94,7 @@ const paintBoard = () => {
 }
 const changeClaimedColors = (color) => {
     claimedSquares.forEach(sqr => {
-        BOARD_STATE[parseInt(sqr.split(',')[0])][parseInt(sqr.split(',')[1])] = color;
+        BOARD_STATE[sqr[0]][sqr[1]] = color;
     });
     checkForNewSquares(color);
     paintBoard();
@@ -141,11 +130,12 @@ const loadCoordinates = () => {
     return;
 }
 const colorBtnClickHandler = (e) => {
+    // debugger;
     currentColor = parseInt(e.target.dataset.color);
     changeClaimedColors(currentColor);
     return;
 }
-const toggleButtons = (onOff) => {
+const initButtons = (onOff) => {
 
     if(!!onOff) {
         COLOR_BTNS.forEach(btn => {
@@ -159,17 +149,16 @@ const toggleButtons = (onOff) => {
     return;
 }
 const initGame = () => {
-
     activateColorButtons();
     totalMoves = 30;
     updateTotalMoves();
 
     randomizeBoard(COLORS);
     loadCoordinates();
-    toggleButtons(1);
+    initButtons(1);
 
     currentColor = BOARD_STATE[0][0];
-    claimedSquares = ["0,0"];
+    claimedSquares = [[0, 0]];
     checkForNewSquares(); 
     return;       
 }

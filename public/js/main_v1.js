@@ -24,73 +24,42 @@ let totalMoves;
 let claimedSquares;    
 let currentColor;
 
-const addNewSquares = (sqrs) => {
-    claimedSquares = claimedSquares.concat(sqrs); 
+const addNewSquares = (array) => {
+    claimedSquares = claimedSquares.concat(array); 
     return;
 }
 const checkAdjacentSquares = (sqr) => {
     
-    const isOffEdge = (adjSqr) => {
-        if(adjSqr[0] < 0 || adjSqr[0] >= Math.sqrt(SQUARES.length) || adjSqr[1] < 0 || adjSqr[1] >= Math.sqrt(SQUARES.length)) return true
-        return false;
-    } 
     const isClaimed = (sqr) => {
-
-        if (claimedSquares.indexOf(sqr) >= 0) {
-            return true;
-        } else {
+        if (claimedSquares.includes(sqr)) return true;
         return false;
-        }
     }
     const checkNeighbor = (sqr, stateSqr) => {
         if(Math.abs(sqr[0] - stateSqr[0]) + Math.abs(sqr[1] - stateSqr[1]) == 1) return true;
         return false;
     }
-    const searchAdjacentSquares = (sqr, stepRow, stepCol, color) => {
-        let curRow = parseInt(sqr.split(',')[0]) + stepRow;
-        let curCol = parseInt(sqr.split(',')[1]) + stepCol;
-        let endWhileLoop = false;
-
-        while(!endWhileLoop) {
-
-            if(!isOffEdge([curRow, curCol])) {
-
-                if(BOARD_STATE[curRow][curCol] === color && isClaimed(`${curRow},${curCol}`) === false) {
-                    claimedSquares.push(`${curRow},${curCol}`);    
-
-                    curRow += stepRow;
-                    curCol += stepCol;
-                } else {
-                    endWhileLoop = true;
+    const searchAdjacentSquares = (sqr, color) => {
+        // debugger;
+        let stateSqr;
+        
+        BOARD_STATE.forEach((row, rowInd) => {
+            row.forEach((col, colInd) => {
+                stateSqr = [rowInd, colInd];
+                if(!isClaimed(stateSqr) && checkNeighbor(sqr, stateSqr)) {
+                    claimedSquares.push(stateSqr);
                 }
-            } else {
-                endWhileLoop = true;
-            }
-        }
+            });
+        });
         return;
     }
-    searchAdjacentSquares(sqr, 0, -1, currentColor); //left
-    searchAdjacentSquares(sqr, 0, 1, currentColor); //right
-    searchAdjacentSquares(sqr, -1, 0, currentColor); //up
-    searchAdjacentSquares(sqr, 1, 0, currentColor); //down
+    searchAdjacentSquares(sqr);
 
     return;
 }
 const checkForNewSquares = (color) => {
-    let counter = -1;
-    let arrayLength;;
-    let endLoop = false;
-    // debugger
-    while(endLoop == false) {
-        counter++;
-        if(claimedSquares.length > counter) {
-            
-            checkAdjacentSquares(claimedSquares[counter], color);
-            
-        } else {
-            endLoop = true;
-        }
-    }
+    claimedSquares.forEach(sqr => {
+        checkAdjacentSquares(sqr);
+    });
     paintBoard(); 
 }
 const paintBoard = () => {
@@ -105,7 +74,7 @@ const paintBoard = () => {
 }
 const changeClaimedColors = (color) => {
     claimedSquares.forEach(sqr => {
-        BOARD_STATE[parseInt(sqr.split(',')[0])][parseInt(sqr.split(',')[1])] = color;
+        BOARD_STATE[sqr[0]][sqr[1]] = color;
     });
     checkForNewSquares(color);
     paintBoard();
@@ -141,6 +110,7 @@ const loadCoordinates = () => {
     return;
 }
 const colorBtnClickHandler = (e) => {
+    // debugger;
     currentColor = parseInt(e.target.dataset.color);
     changeClaimedColors(currentColor);
     return;
@@ -159,7 +129,6 @@ const toggleButtons = (onOff) => {
     return;
 }
 const initGame = () => {
-
     activateColorButtons();
     totalMoves = 30;
     updateTotalMoves();
@@ -169,7 +138,7 @@ const initGame = () => {
     toggleButtons(1);
 
     currentColor = BOARD_STATE[0][0];
-    claimedSquares = ["0,0"];
+    claimedSquares = [[0, 0]];
     checkForNewSquares(); 
     return;       
 }
